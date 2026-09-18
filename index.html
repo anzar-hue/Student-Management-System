@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sterling Heritage Institute | Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .neon-text-cyan { text-shadow: 0 0 10px rgba(34, 211, 238, 0.5); }
+        .neon-text-orange { text-shadow: 0 0 10px rgba(251, 146, 60, 0.5); }
+        /* Hide all views by default */
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+        /* Custom scrollbar for tables */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 1); }
+        ::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 1); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(34, 211, 238, 0.5); }
+        /* Custom Landing Page Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-float-delayed { animation: float 6s ease-in-out 3s infinite; }
+        .gradient-text {
+            background: linear-gradient(to right, #22d3ee, #fb923c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 min-h-screen flex flex-col bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
+
+    <!-- TOP NAVIGATION -->
+    <nav class="glass-panel sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-lg">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 rounded bg-cyan-500 shadow-[0_0_15px_rgba(34,211,238,0.6)] flex items-center justify-center font-bold text-slate-900">SH</div>
+            <h1 class="text-xl font-semibold tracking-wide text-white">STERLING <span class="text-cyan-400 font-light">HERITAGE</span></h1>
+        </div>
+        <div id="nav-user-info" class="hidden flex items-center space-x-4">
+            <span id="nav-user-name" class="text-sm font-medium text-slate-300"></span>
+            <button onclick="logout()" class="px-4 py-1.5 rounded-full border border-orange-500/50 text-orange-400 text-sm hover:bg-orange-500 hover:text-slate-900 transition-all duration-300 shadow-[0_0_10px_rgba(251,146,60,0.2)]">Sign Out</button>
+        </div>
+    </nav>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="toast" class="fixed top-20 right-6 glass-panel px-6 py-3 rounded-lg border-l-4 border-cyan-400 transform translate-x-full transition-transform duration-300 z-50">
+        <span id="toast-msg"></span>
+    </div>
+
+    <main class="flex-grow flex flex-col items-center justify-center p-6 w-full max-w-7xl mx-auto">
+        <!-- 0. LANDING VIEW -->
+        <section id="landing-view" class="view-section active w-full min-h-[80vh] flex flex-col justify-center items-center relative overflow-hidden">
+            <!-- Animated Background Orbs -->
+            <div class="absolute top-10 left-20 w-72 h-72 bg-cyan-500/20 rounded-full blur-3xl animate-float pointer-events-none"></div>
+            <div class="absolute bottom-10 right-20 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl animate-float-delayed pointer-events-none"></div>
+            
+            <!-- Hero Content -->
+            <div class="z-10 text-center max-w-3xl glass-panel p-12 rounded-3xl shadow-2xl border-t border-l border-white/10 backdrop-blur-md">
+                <div class="w-16 h-16 mx-auto mb-6 rounded-xl bg-gradient-to-br from-cyan-400 to-cyan-600 shadow-[0_0_30px_rgba(34,211,238,0.5)] flex items-center justify-center font-bold text-slate-900 text-2xl">
+                    SH
+                </div>
+                <h1 class="text-5xl md:text-6xl font-bold text-white tracking-tight mb-4">
+                    Sterling <span class="gradient-text font-light">Heritage</span>
+                </h1>
+                <p class="text-lg text-slate-400 mb-10 font-light tracking-wide">
+                    Next-Generation Academic Management & Performance Analytics Engine.
+                </p>
+                
+                <button onclick="switchView('login-view')" class="group relative px-8 py-4 bg-transparent overflow-hidden rounded-full font-semibold tracking-wider uppercase text-sm transition-all duration-300">
+                    <div class="absolute inset-0 w-full h-full border border-cyan-500/50 rounded-full group-hover:bg-cyan-500/10 transition-colors"></div>
+                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-cyan-500 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full blur-md -z-10"></div>
+                    <span class="relative text-cyan-400 group-hover:text-white transition-colors flex items-center justify-center space-x-3">
+                        <span>Access Portal</span>
+                        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </span>
+                </button>
+            </div>
+        </section>
+        
+        <!-- 1. LOGIN VIEW -->
+        <section id="login-view" class="view-section active w-full max-w-md">
+            <div class="glass-panel p-8 rounded-2xl shadow-2xl">
+                <h2 class="text-2xl font-semibold text-white mb-6 text-center">System <span class="text-cyan-400 neon-text-cyan">Authentication</span></h2>
+                <form id="login-form" class="space-y-5" onsubmit="handleLogin(event)">
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">Access Level</label>
+                        <select id="login-role" class="w-full bg-slate-800/50 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-colors">
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">ID / Roll Number</label>
+                        <input type="text" id="login-id" required class="w-full bg-slate-800/50 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-colors placeholder-slate-500" placeholder="e.g. 1">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">Password</label>
+                        <input type="password" id="login-pass" required class="w-full bg-slate-800/50 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-colors placeholder-slate-500" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold py-3 rounded-lg mt-4 transition-all duration-300 shadow-[0_0_15px_rgba(34,211,238,0.4)] hover:shadow-[0_0_25px_rgba(34,211,238,0.6)]">
+                        Authenticate
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 2. STUDENT DASHBOARD -->
+        <section id="student-view" class="view-section w-full">
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-1" id="std-name">Loading...</h2>
+                    <p class="text-slate-400">Roll No: <span id="std-roll" class="text-cyan-400 font-mono">--</span> | Section: <span id="std-sec" class="text-cyan-400">--</span></p>
+                </div>
+                <div class="glass-panel rounded-lg p-1 inline-flex">
+                    <button onclick="fetchStudentData('theory')" id="btn-theory" class="px-6 py-2 rounded-md bg-cyan-500/20 text-cyan-400 font-medium transition-colors">Theory</button>
+                    <button onclick="fetchStudentData('practical')" id="btn-practical" class="px-6 py-2 rounded-md text-slate-400 hover:text-white transition-colors">Practical</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Marks Table -->
+                <div class="lg:col-span-2 glass-panel rounded-2xl overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-800/50 border-b border-slate-700 text-xs uppercase tracking-wider text-slate-400">
+                                <th class="px-6 py-4">Subject</th>
+                                <th class="px-6 py-4 text-right">Max</th>
+                                <th class="px-6 py-4 text-right">Scored</th>
+                            </tr>
+                        </thead>
+                        <tbody id="std-marks-body" class="divide-y divide-slate-700/50">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Summary Card -->
+                <div class="glass-panel rounded-2xl p-8 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl"></div>
+                    <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl"></div>
+                    
+                    <h3 class="text-sm uppercase tracking-widest text-slate-400 mb-6">Performance Summary</h3>
+                    <div class="relative w-40 h-40 flex items-center justify-center mb-6">
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                            <path class="text-slate-700" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path id="std-chart" class="text-cyan-400" stroke-width="3" stroke-dasharray="0, 100" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="std-percent" class="text-3xl font-bold text-white">0%</span>
+                        </div>
+                    </div>
+                    <p class="text-4xl font-light text-white mb-2"><span id="std-total" class="font-bold">0</span> <span class="text-lg text-slate-500">/ <span id="std-max">0</span></span></p>
+                    <p id="std-status" class="px-4 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-slate-800 text-slate-300 mt-2">Evaluating</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. TEACHER PORTAL -->
+        <section id="teacher-view" class="view-section w-full max-w-2xl">
+            <div class="glass-panel rounded-2xl p-8 shadow-2xl">
+                <h2 class="text-2xl font-bold text-white mb-2">Targeted <span class="text-orange-400 neon-text-orange">Grading Engine</span></h2>
+                <p class="text-slate-400 text-sm mb-8">Override database records directly.</p>
+                
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">Record Type</label>
+                        <select id="tch-kind" class="w-full bg-slate-800/50 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-orange-400 focus:outline-none">
+                            <option value="theory">Theory</option>
+                            <option value="practical">Practical & Internal</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">Subject</label>
+                        <select id="tch-subject" class="w-full bg-slate-800/50 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-orange-400 focus:outline-none">
+                            <option value="AI">Artificial Intelligence (AI)</option>
+                            <option value="OOPM">OOPM</option>
+                            <option value="IPS">IPS</option>
+                            <option value="DS">Data Structures (DS)</option>
+                            <option value="TC">Theory of Computation (TC)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3 mb-8 pb-8 border-b border-slate-700/50">
+                    <input type="text" id="tch-search-roll" placeholder="Enter Roll Number (e.g. 1)" class="flex-grow bg-slate-800/50 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-orange-400 focus:outline-none placeholder-slate-500">
+                    <button onclick="fetchTeacherRecord()" class="bg-slate-700 hover:bg-slate-600 text-white px-6 rounded-lg transition-colors border border-slate-600">Search</button>
+                </div>
+
+                <!-- Hidden until searched -->
+                <div id="tch-update-area" class="hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <p class="text-sm text-slate-400">Student Found</p>
+                            <p id="tch-res-name" class="text-lg font-semibold text-white">--</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-slate-400">Current Mark</p>
+                            <p class="text-2xl font-mono text-cyan-400"><span id="tch-res-mark">--</span> <span class="text-sm text-slate-500">/ <span id="tch-res-max">100</span></span></p>
+                        </div>
+                    </div>
+                    <div class="flex items-end space-x-3 mt-6">
+                        <div class="flex-grow">
+                            <label class="block text-xs uppercase tracking-wider text-slate-400 mb-1">Input New Grade</label>
+                            <input type="number" id="tch-new-mark" class="w-full bg-slate-800/50 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-orange-400 focus:outline-none text-xl font-mono">
+                        </div>
+                        <button onclick="submitTeacherMark()" class="bg-orange-500 hover:bg-orange-400 text-slate-900 font-bold px-8 py-3 rounded-lg transition-all duration-300 shadow-[0_0_15px_rgba(251,146,60,0.4)] h-[52px]">Override</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. ADMIN PORTAL -->
+        <section id="admin-view" class="view-section w-full">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-white">Master <span class="text-cyan-400 neon-text-cyan">Database View</span></h2>
+                <select id="adm-kind" onchange="fetchAdminData()" class="bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white focus:border-cyan-400 focus:outline-none text-sm">
+                    <option value="theory">Theory Records</option>
+                    <option value="practical">Practical Records</option>
+                </select>
+            </div>
+            
+            <div class="glass-panel rounded-2xl overflow-hidden overflow-x-auto border border-slate-700">
+                <table class="w-full text-sm text-left whitespace-nowrap">
+                    <thead class="bg-slate-800 border-b border-slate-600">
+                        <tr class="text-slate-300 uppercase tracking-wider text-xs">
+                            <th class="px-4 py-4 font-medium">Roll</th>
+                            <th class="px-4 py-4 font-medium">Name</th>
+                            <th class="px-4 py-4 font-medium">Sec</th>
+                            <th class="px-4 py-4 font-medium text-center">AI</th>
+                            <th class="px-4 py-4 font-medium text-center">OOPM</th>
+                            <th class="px-4 py-4 font-medium text-center">IPS</th>
+                            <th class="px-4 py-4 font-medium text-center">DS</th>
+                            <th class="px-4 py-4 font-medium text-center">TC</th>
+                            <th class="px-4 py-4 font-medium text-right text-cyan-400">Total</th>
+                            <th class="px-4 py-4 font-medium text-right text-orange-400">%</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adm-table-body" class="divide-y divide-slate-700/50">
+                        <!-- Injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- UTILS ---
+        const showToast = (msg, isError = false) => {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = msg;
+            t.className = `fixed top-20 right-6 glass-panel px-6 py-3 rounded-lg border-l-4 ${isError ? 'border-red-500 text-red-100' : 'border-cyan-400 text-cyan-100'} transform transition-transform duration-300 z-50`;
+            t.classList.remove('translate-x-full');
+            setTimeout(() => t.classList.add('translate-x-full'), 3000);
+        };
+
+        const req = async (url, options = {}) => {
+            options.headers = { 'Content-Type': 'application/json', ...options.headers };
+            try {
+                const res = await fetch(url, options);
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(data.error || 'Network request failed');
+                return data;
+            } catch (err) {
+                showToast(err.message, true);
+                throw err;
+            }
+        };
+
+        // --- ROUTING ---
+        const switchView = (viewId) => {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+        };
+
+        const updateNav = (user) => {
+            const navUser = document.getElementById('nav-user-info');
+            if (user) {
+                document.getElementById('nav-user-name').textContent = `${user.name} (${user.role.toUpperCase()})`;
+                navUser.classList.remove('hidden');
+            } else {
+                navUser.classList.add('hidden');
+            }
+        };
+
+        // --- AUTH ---
+        const checkSession = async () => {
+            try {
+                const res = await req('/api/me');
+                if (res.authenticated) routeUser(res);
+                else switchView('landing-view'); // Changed from login-view to landing-view
+            } catch { switchView('landing-view'); } // Changed from login-view to landing-view
+        };
+
+        const handleLogin = async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.innerHTML = 'Authenticating...';
+            try {
+                const data = await req('/api/login', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        role: document.getElementById('login-role').value,
+                        id: document.getElementById('login-id').value,
+                        password: document.getElementById('login-pass').value
+                    })
+                });
+                showToast('Authentication Successful');
+                routeUser(data);
+            } catch (err) { /* handled by req */ }
+            finally { btn.innerHTML = 'Authenticate'; }
+        };
+
+        const logout = async () => {
+            await req('/api/logout', { method: 'POST' });
+            document.getElementById('login-form').reset();
+            updateNav(null);
+            switchView('login-view');
+        };
+
+        const routeUser = (data) => {
+            updateNav(data);
+            if (data.role === 'student') {
+                document.getElementById('btn-theory').dataset.roll = data.id;
+                fetchStudentData('theory', data.id);
+                switchView('student-view');
+            } else if (data.role === 'teacher') {
+                switchView('teacher-view');
+            } else if (data.role === 'admin') {
+                fetchAdminData();
+                switchView('admin-view');
+            }
+        };
+
+        // --- STUDENT LOGIC ---
+        const fetchStudentData = async (kind, rollOverride = null) => {
+            const btnTheory = document.getElementById('btn-theory');
+            const btnPractical = document.getElementById('btn-practical');
+            const roll = rollOverride || btnTheory.dataset.roll;
+            
+            // Toggle active styling
+            if(kind === 'theory') {
+                btnTheory.className = 'px-6 py-2 rounded-md bg-cyan-500/20 text-cyan-400 font-medium transition-colors';
+                btnPractical.className = 'px-6 py-2 rounded-md text-slate-400 hover:text-white transition-colors';
+            } else {
+                btnPractical.className = 'px-6 py-2 rounded-md bg-cyan-500/20 text-cyan-400 font-medium transition-colors';
+                btnTheory.className = 'px-6 py-2 rounded-md text-slate-400 hover:text-white transition-colors';
+            }
+
+            const data = await req(`/api/student/${roll}`);
+            document.getElementById('std-name').textContent = data.name;
+            document.getElementById('std-roll').textContent = data.roll;
+            document.getElementById('std-sec').textContent = data.sec;
+
+            const targetData = data[kind];
+            const tbody = document.getElementById('std-marks-body');
+            tbody.innerHTML = '';
+            
+            data.subjects.forEach(sub => {
+                const mark = targetData.marks[sub.code];
+                const display = mark !== null ? mark : '-';
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-800/30 transition-colors">
+                        <td class="px-6 py-4 font-medium text-slate-200">${sub.name} <span class="text-xs text-slate-500 ml-2">(${sub.code})</span></td>
+                        <td class="px-6 py-4 text-right text-slate-400">${targetData.maxPerSubject}</td>
+                        <td class="px-6 py-4 text-right font-mono text-cyan-400">${display}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('std-total').textContent = targetData.total;
+            document.getElementById('std-max').textContent = targetData.maxTotal;
+            document.getElementById('std-percent').textContent = `${targetData.percent}%`;
+            document.getElementById('std-chart').setAttribute('stroke-dasharray', `${targetData.percent}, 100`);
+            
+            const statBadge = document.getElementById('std-status');
+            statBadge.textContent = targetData.division;
+            statBadge.className = `px-4 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mt-2 ${targetData.passed ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`;
+        };
+
+        // --- TEACHER LOGIC ---
+        const fetchTeacherRecord = async () => {
+            const roll = document.getElementById('tch-search-roll').value;
+            const kind = document.getElementById('tch-kind').value;
+            const sub = document.getElementById('tch-subject').value;
+            if(!roll) return showToast('Enter a Roll Number', true);
+
+            const data = await req(`/api/teacher/mark?kind=${kind}&subject=${sub}&roll=${roll}`);
+            document.getElementById('tch-res-name').textContent = `${data.name} (Sec ${data.sec})`;
+            document.getElementById('tch-res-mark').textContent = data.mark !== null ? data.mark : '0';
+            document.getElementById('tch-res-max').textContent = data.maxMarks;
+            document.getElementById('tch-new-mark').value = data.mark !== null ? data.mark : '';
+            
+            document.getElementById('tch-update-area').classList.remove('hidden');
+        };
+
+        const submitTeacherMark = async () => {
+            const roll = document.getElementById('tch-search-roll').value;
+            const kind = document.getElementById('tch-kind').value;
+            const sub = document.getElementById('tch-subject').value;
+            const val = document.getElementById('tch-new-mark').value;
+
+            await req('/api/teacher/mark', {
+                method: 'POST',
+                body: JSON.stringify({ kind, subject: sub, roll, mark: val })
+            });
+            showToast('Database Overridden Successfully');
+            fetchTeacherRecord(); // Refresh visual
+        };
+
+        // --- ADMIN LOGIC ---
+        const fetchAdminData = async () => {
+            const kind = document.getElementById('adm-kind').value;
+            const data = await req(`/api/admin/all?kind=${kind}`);
+            
+            const tbody = document.getElementById('adm-table-body');
+            tbody.innerHTML = '';
+            
+            data.rows.forEach((r, idx) => {
+                const bg = idx % 2 === 0 ? 'bg-slate-800/20' : 'bg-transparent';
+                tbody.innerHTML += `
+                    <tr class="${bg} hover:bg-slate-800/60 transition-colors text-slate-300">
+                        <td class="px-4 py-3 font-mono text-white">${r.roll}</td>
+                        <td class="px-4 py-3">${r.name}</td>
+                        <td class="px-4 py-3 text-slate-400">${r.sec}</td>
+                        <td class="px-4 py-3 text-center">${r.marks.AI ?? '-'}</td>
+                        <td class="px-4 py-3 text-center">${r.marks.OOPM ?? '-'}</td>
+                        <td class="px-4 py-3 text-center">${r.marks.IPS ?? '-'}</td>
+                        <td class="px-4 py-3 text-center">${r.marks.DS ?? '-'}</td>
+                        <td class="px-4 py-3 text-center">${r.marks.TC ?? '-'}</td>
+                        <td class="px-4 py-3 text-right font-mono font-bold text-cyan-400">${r.total}</td>
+                        <td class="px-4 py-3 text-right font-mono ${r.passed ? 'text-orange-400' : 'text-red-400'}">${r.percent}%</td>
+                    </tr>
+                `;
+            });
+        };
+
+        // Boot
+        checkSession();
+    </script>
+</body>
+</html>
